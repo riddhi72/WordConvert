@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,8 +22,8 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
 
-    String user_input;
-    int difficulty;
+    //String user_input;
+    int difficulty,turn=1;
     TextView level;
     ArrayList<String> words = new ArrayList<>();
     HashMap<String, String> pairs = new HashMap<>();
@@ -46,8 +47,8 @@ public class GameActivity extends AppCompatActivity {
         check_word.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                previous.setText("Hello");
-            }
+                playerCheck();
+              }
         });
 
         try {
@@ -77,19 +78,21 @@ public class GameActivity extends AppCompatActivity {
         }
 
         Intent intent = getIntent();
-        difficulty = intent.getIntExtra("choice", 0);
+        /*difficulty = intent.getIntExtra("choice", 0);
         level = (TextView)findViewById(R.id.level);
         if(difficulty==1)
             level.setText("Beginner");
         else if(difficulty==2)
             level.setText("Amateur");
         else
-            level.setText("Legend");
+            level.setText("Legend");*/
 
         reset_game.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onStart();
+                check_word.setEnabled(true);
+                user_word.setFocusable(true);
+                gameStart();
             }
         });
 
@@ -98,13 +101,59 @@ public class GameActivity extends AppCompatActivity {
 
     public void gameStart() {
 
+        user_word.setText("");
         ArrayList<String> k = new ArrayList<String>(pairs.keySet());
         String original = k.get(random.nextInt(k.size()));
         String changed = pairs.get(original);
         source.setText(original);
         destination.setText(changed);
+    }
 
-        user_input = user_word.getText().toString();
+    public boolean isWord(String word)
+    {
+        if(words.contains(word))
+            return true;
+        return false;
+    }
 
+    public boolean letterChange(String a, String b)
+    {
+        int i,count=0;
+        if(a.length()!=b.length())
+            return false;
+        for(i=0;i<a.length();i++){
+            if(a.charAt(i) != b.charAt(i))
+                count++;
+        }
+        if(count==1)
+            return true;
+        else
+            return false;
+    }
+
+    public void playerCheck()
+    {
+        String entered = user_word.getText().toString();
+        if(isWord(entered))
+        {
+            if(letterChange(entered, previous.getText().toString()))
+                previous.setText(entered);
+            else
+            {
+                if(turn!=1)
+                    Toast.makeText(GameActivity.this, "You can change only 1 letter!", Toast.LENGTH_SHORT).show();
+                else
+                    previous.setText(entered);
+            }
+        }
+        else
+            Toast.makeText(GameActivity.this, "Not a valid word", Toast.LENGTH_SHORT).show();
+        if(previous.getText().toString().equalsIgnoreCase(destination.getText().toString()))
+        {
+            Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
+            check_word.setEnabled(false);
+            user_word.setFocusable(false);
+        }
+        user_word.setText("");
     }
 }
