@@ -35,7 +35,9 @@
         android:layout_below="@+id/prev"
         android:textColor="#000"
         android:textSize="30dp"
-        android:hint="User Input" />
+        android:hint="User Input"
+        android:singleLine="true"
+        android:imeOptions="actionDone" />
 
     <TextView
         android:id="@+id/dest"
@@ -48,5 +50,36 @@
         android:textColor="@color/colorPrimaryDark"
         android:textSize="25dp"
         android:text="Destination Word" />
+
+    <TextView
+        android:id="@+id/level"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="89dp"
+        android:visibility="invisible"/>
+
+    <Button
+        android:id="@+id/reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/prev"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/prev"
+        android:layout_marginBottom="26dp"
+        android:text="Reset" />
+
+    <Button
+        android:id="@+id/check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/reset"
+        android:layout_alignBottom="@+id/reset"
+        android:layout_alignEnd="@+id/prev"
+        android:layout_alignRight="@+id/prev"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:text="Check" />
 
 </RelativeLayout>
