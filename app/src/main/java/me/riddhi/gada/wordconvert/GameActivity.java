@@ -133,7 +133,7 @@ public class GameActivity extends AppCompatActivity {
     public void playerCheck()
     {
         String entered = user_word.getText().toString();
-        if (entered == "")
+        if (entered == null)
             Toast.makeText(this, "No input given", Toast.LENGTH_SHORT).show();
         else
             if(isWord(entered))
@@ -141,7 +141,13 @@ public class GameActivity extends AppCompatActivity {
                 if (turn == 1)
                 {
                     if (letterChange(entered,source.getText().toString()))
-                        previous.setText("");
+                        previous.setText(entered);
+                        if(previous.getText().toString().equalsIgnoreCase(destination.getText().toString()))
+                        {
+                            Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
+                            check_word.setEnabled(false);
+                            user_word.setFocusable(false);
+                        }
                     else
                         Toast.makeText(this, "You can change only 1 letter!", Toast.LENGTH_SHORT).show();
                     turn = 0;
@@ -150,18 +156,18 @@ public class GameActivity extends AppCompatActivity {
                 {
                     if (letterChange(entered, previous.getText().toString()))
                         previous.setText(entered);
+                        if(previous.getText().toString().equalsIgnoreCase(destination.getText().toString()))
+                        {
+                            Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
+                            check_word.setEnabled(false);
+                            user_word.setFocusable(false);
+                        }
                     else
                         Toast.makeText(this, "You can change only 1 letter!", Toast.LENGTH_SHORT).show();
                 }
             }
             else
                 Toast.makeText(this, "Not a valid word", Toast.LENGTH_SHORT).show();
-        if(previous.getText().toString().equalsIgnoreCase(destination.getText().toString()))
-        {
-            Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
-            check_word.setEnabled(false);
-            user_word.setFocusable(false);
-        }
         user_word.setText("");
     }
 }
