@@ -8,19 +8,18 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button beginner, amateur, pro;
+    Button easy, difficult;
     int choice = 0;
     Intent i;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        beginner = (Button)findViewById(R.id.beginner);
-        amateur = (Button)findViewById(R.id.amateur);
-        pro = (Button)findViewById(R.id.legend);
+        easy = (Button)findViewById(R.id.easy);
+        difficult = (Button)findViewById(R.id.difficult);
         i = new Intent(this, GameActivity.class);
 
-        beginner.setOnClickListener(new View.OnClickListener() {
+        easy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 choice = 1;
@@ -29,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        amateur.setOnClickListener(new View.OnClickListener() {
+        difficult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 choice=2;
@@ -38,13 +37,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        pro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                choice=3;
-                i.putExtra("choice", choice);
-                startActivity(i);
-            }
-        });
     }
 }

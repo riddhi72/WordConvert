@@ -19,15 +19,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Timer;
 
 public class GameActivity extends AppCompatActivity {
 
-    //String user_input;
     int difficulty,turn=1;
-    TextView level;
     ArrayList<String> words = new ArrayList<>();
     HashMap<String, String> pairs = new HashMap<>();
-    TextView source, destination, previous;
+    TextView source, destination, previous, countdown;
     Random random = new Random();
     Button reset_game, check_word;
     EditText user_word;
@@ -39,17 +38,11 @@ public class GameActivity extends AppCompatActivity {
         AssetManager assetManager = getAssets();
         source = (TextView)findViewById(R.id.source);
         destination = (TextView)findViewById(R.id.dest);
+        countdown = (TextView) findViewById(R.id.countdown);
         reset_game = (Button)findViewById(R.id.reset);
         check_word = (Button)findViewById(R.id.check);
         user_word = (EditText)findViewById(R.id.input);
         previous  =(TextView)findViewById(R.id.prev);
-
-        check_word.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                playerCheck();
-              }
-        });
 
         try {
             InputStream inputStream = assetManager.open("words.txt");
@@ -77,15 +70,19 @@ public class GameActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        check_word.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playerCheck();
+            }
+        });
+
         Intent intent = getIntent();
-        /*difficulty = intent.getIntExtra("choice", 0);
-        level = (TextView)findViewById(R.id.level);
+        difficulty = intent.getIntExtra("choice", 0);
         if(difficulty==1)
-            level.setText("Beginner");
-        else if(difficulty==2)
-            level.setText("Amateur");
+            countdown.setText("");
         else
-            level.setText("Legend");*/
+            countdown.setText("Time Starts in 3s");
 
         reset_game.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,6 +99,8 @@ public class GameActivity extends AppCompatActivity {
     public void gameStart() {
 
         user_word.setText("");
+        previous.setText("");
+        turn=1;
         ArrayList<String> k = new ArrayList<String>(pairs.keySet());
         String original = k.get(random.nextInt(k.size()));
         String changed = pairs.get(original);
@@ -134,20 +133,29 @@ public class GameActivity extends AppCompatActivity {
     public void playerCheck()
     {
         String entered = user_word.getText().toString();
-        if(isWord(entered))
-        {
-            if(letterChange(entered, previous.getText().toString()))
-                previous.setText(entered);
-            else
-            {
-                if(turn!=1)
-                    Toast.makeText(GameActivity.this, "You can change only 1 letter!", Toast.LENGTH_SHORT).show();
-                else
-                    previous.setText(entered);
-            }
-        }
+        if (entered == "")
+            Toast.makeText(this, "No input given", Toast.LENGTH_SHORT).show();
         else
-            Toast.makeText(GameActivity.this, "Not a valid word", Toast.LENGTH_SHORT).show();
+            if(isWord(entered))
+            {
+                if (turn == 1)
+                {
+                    if (letterChange(entered,source.getText().toString()))
+                        previous.setText("");
+                    else
+                        Toast.makeText(this, "You can change only 1 letter!", Toast.LENGTH_SHORT).show();
+                    turn = 0;
+                }
+                else
+                {
+                    if (letterChange(entered, previous.getText().toString()))
+                        previous.setText(entered);
+                    else
+                        Toast.makeText(this, "You can change only 1 letter!", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else
+                Toast.makeText(this, "Not a valid word", Toast.LENGTH_SHORT).show();
         if(previous.getText().toString().equalsIgnoreCase(destination.getText().toString()))
         {
             Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
