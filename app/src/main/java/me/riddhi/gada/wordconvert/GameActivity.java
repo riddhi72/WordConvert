@@ -207,6 +207,7 @@ public class GameActivity extends AppCompatActivity {
         {
             check_word.setEnabled(false);
             user_word.setEnabled(false);
+            myTimer.cancel();
             Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
         }
     }
