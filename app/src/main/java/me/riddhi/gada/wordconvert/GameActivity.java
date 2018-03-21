@@ -24,16 +24,17 @@ import java.util.Timer;
 
 public class GameActivity extends AppCompatActivity {
 
-    int difficulty,turn=0;
+    int difficulty,turn;
     ArrayList<String> words = new ArrayList<>();
     HashMap<String, String> pairs = new HashMap<>();
-    TextView source, destination, previous, countdown;
+    TextView source, destination, previous, countdown, noOfTurns;
     Random random = new Random();
-    Button reset_game, check_word;
+    Button reset_game, check_word, go_back;
     EditText user_word;
     CountDownTimer myTimer;
     final long defaultTime = 60000;
     long timeLeft = defaultTime;
+    Intent i;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +46,14 @@ public class GameActivity extends AppCompatActivity {
         countdown = (TextView) findViewById(R.id.countdown);
         reset_game = (Button)findViewById(R.id.reset);
         check_word = (Button)findViewById(R.id.check);
+        go_back = (Button)findViewById(R.id.back);
         user_word = (EditText)findViewById(R.id.input);
         previous  =(TextView)findViewById(R.id.prev);
+        noOfTurns  =(TextView)findViewById(R.id.turns);
+        turn=0;
+
+        Intent intent = getIntent();
+        difficulty = intent.getIntExtra("choice", 0);
 
         try {
             InputStream inputStream = assetManager.open("words.txt");
@@ -81,16 +88,21 @@ public class GameActivity extends AppCompatActivity {
             }
         });
 
-        Intent intent = getIntent();
-        difficulty = intent.getIntExtra("choice", 0);
-
         reset_game.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 check_word.setEnabled(true);
                 turn=0;
-                myTimer.cancel();
+                if(difficulty==2)
+                    myTimer.cancel();
                 gameStart();
+            }
+        });
+
+        go_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
 
@@ -98,14 +110,16 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void gameStart() {
-        if (difficulty == 2){
+        if (difficulty == 2)
+        {
             timeLeft = defaultTime;
             startTimer();
         }
+        turn++;
+        noOfTurns.setText("Turn: " + Integer.toString(turn));
         user_word.setEnabled(true);
         user_word.setText("");
         previous.setText("");
-        turn=1;
         ArrayList<String> k = new ArrayList<String>(pairs.keySet());
         String original = k.get(random.nextInt(k.size()));
         String changed = pairs.get(original);
@@ -138,28 +152,25 @@ public class GameActivity extends AppCompatActivity {
     public void playerCheck()
     {
         String entered = user_word.getText().toString();
-        ++turn;
-        /*if (entered.equals(""))
-            Toast.makeText(this, "No input given", Toast.LENGTH_SHORT).show();
-        else*/
-            if(isWord(entered)) {
-                if (!letterChange(entered, previous.getText().toString()))
+        Log.d("Turn: ", Integer.toString(turn));
+        if(isWord(entered)) {
+            if (!letterChange(entered, previous.getText().toString()))
+            {
+                if (turn == 1)
                 {
-                    if (turn == 1)
-                    {
-                        previous.setText(entered);
-                        checkWin();
-                    }
-                    else
-                        Toast.makeText(this, "You can change only 1 letter at a time", Toast.LENGTH_SHORT).show();
-                }
-                else {
                     previous.setText(entered);
                     checkWin();
                 }
+                else
+                    Toast.makeText(this, "You can change only 1 letter at a time", Toast.LENGTH_SHORT).show();
             }
-            else
-                Toast.makeText(this, "Not a valid word", Toast.LENGTH_SHORT).show();
+            else {
+                previous.setText(entered);
+                checkWin();
+            }
+        }
+        else
+            Toast.makeText(this, "Not a valid word", Toast.LENGTH_SHORT).show();
         if(turn==15)
         {
             Toast.makeText(this, "YOU RAN OUT OF MOVES!", Toast.LENGTH_SHORT).show();
@@ -167,6 +178,7 @@ public class GameActivity extends AppCompatActivity {
             user_word.setEnabled(false);
         }
         user_word.setText("");
+        noOfTurns.setText("Turn: " + Integer.toString(++turn));
     }
 
     void startTimer(){
