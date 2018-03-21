@@ -24,7 +24,7 @@ import java.util.Timer;
 
 public class GameActivity extends AppCompatActivity {
 
-    int difficulty,turn=1;
+    int difficulty,turn=0;
     ArrayList<String> words = new ArrayList<>();
     HashMap<String, String> pairs = new HashMap<>();
     TextView source, destination, previous, countdown;
@@ -88,7 +88,8 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 check_word.setEnabled(true);
-                user_word.setFocusable(true);
+                turn=0;
+                myTimer.cancel();
                 gameStart();
             }
         });
@@ -101,6 +102,7 @@ public class GameActivity extends AppCompatActivity {
             timeLeft = defaultTime;
             startTimer();
         }
+        user_word.setEnabled(true);
         user_word.setText("");
         previous.setText("");
         turn=1;
@@ -136,47 +138,34 @@ public class GameActivity extends AppCompatActivity {
     public void playerCheck()
     {
         String entered = user_word.getText().toString();
-        if (entered == null)
+        ++turn;
+        /*if (entered.equals(""))
             Toast.makeText(this, "No input given", Toast.LENGTH_SHORT).show();
-        else
-            if(isWord(entered))
-            {
-                if (turn == 1)
+        else*/
+            if(isWord(entered)) {
+                if (!letterChange(entered, previous.getText().toString()))
                 {
-                    if (letterChange(entered,source.getText().toString())) {
+                    if (turn == 1)
+                    {
                         previous.setText(entered);
-                        //increase timer by 5 secs
-                        if (previous.getText().toString().equalsIgnoreCase(destination.getText().toString())) {
-                            Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
-                            check_word.setEnabled(false);
-                            user_word.setFocusable(false);
-                        }
-                    }
-                    else {
-                        //decrease timer by 5 secs
-                        Toast.makeText(this, "You can change only 1 letter!", Toast.LENGTH_SHORT).show();
-                    }
-                    turn = 0;
-                }
-                else {
-                    if (letterChange(entered, previous.getText().toString())){
-                        previous.setText(entered);
-                        //increase timer by 5 secs
-                        if (previous.getText().toString().equalsIgnoreCase(destination.getText().toString())) {
-                            Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
-                            check_word.setEnabled(false);
-                            user_word.setFocusable(false);
-                        }
+                        checkWin();
                     }
                     else
-                    {
-                        //decrease timer by 5 secs
-                        Toast.makeText(this, "You can change only 1 letter!", Toast.LENGTH_SHORT).show();
-                    }
+                        Toast.makeText(this, "You can change only 1 letter at a time", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    previous.setText(entered);
+                    checkWin();
                 }
             }
             else
                 Toast.makeText(this, "Not a valid word", Toast.LENGTH_SHORT).show();
+        if(turn==15)
+        {
+            Toast.makeText(this, "YOU RAN OUT OF MOVES!", Toast.LENGTH_SHORT).show();
+            check_word.setEnabled(false);
+            user_word.setEnabled(false);
+        }
         user_word.setText("");
     }
 
@@ -198,5 +187,15 @@ public class GameActivity extends AppCompatActivity {
                 check_word.setEnabled(false);
             }
         }.start();
+    }
+
+    public void checkWin()
+    {
+        if(previous.getText().toString().equalsIgnoreCase(destination.getText().toString()))
+        {
+            check_word.setEnabled(false);
+            user_word.setEnabled(false);
+            Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
+        }
     }
 }
