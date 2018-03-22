@@ -152,7 +152,7 @@ public class GameActivity extends AppCompatActivity {
     public void playerCheck()
     {
         String entered = user_word.getText().toString();
-        Log.d("Turn: ", Integer.toString(turn));
+        //Log.d("Turn: ", Integer.toString(turn));
         if(isWord(entered)) {
             if (!letterChange(entered, previous.getText().toString()))
             {
@@ -207,7 +207,8 @@ public class GameActivity extends AppCompatActivity {
         {
             check_word.setEnabled(false);
             user_word.setEnabled(false);
-            myTimer.cancel();
+            if(difficulty==2)
+                myTimer.cancel();
             Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
         }
     }
