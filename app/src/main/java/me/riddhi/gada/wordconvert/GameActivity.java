@@ -151,12 +151,12 @@ public class GameActivity extends AppCompatActivity {
 
     public void playerCheck()
     {
-        String entered = user_word.getText().toString();
+        String entered = user_word.getText().toString().toLowerCase();
         //Log.d("Turn: ", Integer.toString(turn));
         if(isWord(entered)) {
             if (!letterChange(entered, previous.getText().toString()))
             {
-                if (turn == 1)
+                if (letterChange(entered, source.getText().toString()))
                 {
                     previous.setText(entered);
                     checkWin();

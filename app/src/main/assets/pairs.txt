@@ -1,5 +1,4 @@
 dear fear
-monk perl
 slow fast
 blue pink
 head tail
